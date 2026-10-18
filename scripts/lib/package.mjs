@@ -36,6 +36,8 @@ export const LIMITS = Object.freeze({
   maxRevisionLength: 120,
   maxLicenseNameLength: 80,
   maxSpdxLength: 64,
+  maxRoutes: 64,
+  maxRouteLength: 200,
 });
 
 const PREVIEW_NAMES = new Set(["preview.png", "preview.svg", "preview.webp"]);
@@ -315,6 +317,7 @@ const validateManifest = (manifest, observed, names, limits, problems) => {
       "license",
       "provenance",
       "preview",
+      "routes",
     ]),
     "template.json",
     problems,
@@ -543,6 +546,31 @@ const validateManifest = (manifest, observed, names, limits, problems) => {
   for (const preview of PREVIEW_NAMES) {
     if (names.has(preview) && manifest.preview !== preview) {
       problems.add(preview, "is present but not named by the manifest's preview field");
+    }
+  }
+
+  if (manifest.routes !== undefined) {
+    if (!Array.isArray(manifest.routes)) {
+      problems.add("routes", "must be an array");
+    } else {
+      if (manifest.routes.length > limits.maxRoutes) {
+        problems.add("routes", `contains more than ${limits.maxRoutes} routes`);
+      }
+      const seen = new Set();
+      for (const [index, route] of manifest.routes.entries()) {
+        if (typeof route !== "string" || !/^[A-Z][A-Z0-9-]* \/\S*$/u.test(route)) {
+          problems.add(
+            `routes[${index}]`,
+            "must be 'METHOD /path' with an uppercase method and no whitespace in the path",
+          );
+          continue;
+        }
+        if (route.length > limits.maxRouteLength) {
+          problems.add(`routes[${index}]`, `is longer than ${limits.maxRouteLength} characters`);
+        }
+        if (seen.has(route)) problems.add(`routes[${index}]`, `duplicates '${route}'`);
+        seen.add(route);
+      }
     }
   }
 };

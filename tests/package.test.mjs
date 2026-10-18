@@ -3,7 +3,7 @@ import { readFile, symlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 
-import { canonicalJson, readPackage, sha256Hex } from "../scripts/lib/package.mjs";
+import { LIMITS, canonicalJson, readPackage, sha256Hex } from "../scripts/lib/package.mjs";
 import { temporaryRoot, writePackage } from "./helpers.mjs";
 
 test("a valid package is accepted and its digest is stable", async (t) => {
@@ -93,4 +93,40 @@ test("the manifest is returned as written", async (t) => {
   assert.equal(manifest.id, "other-id");
   const raw = JSON.parse(await readFile(path.join(directory, "template.json"), "utf8"));
   assert.equal(raw.id, "other-id");
+});
+
+test("a package may declare METHOD /path routes", async (t) => {
+  const root = await temporaryRoot();
+  t.after(() => import("node:fs/promises").then(({ rm }) => rm(root, { recursive: true, force: true })));
+  const { directory } = await writePackage(root, {
+    manifest: { routes: ["GET /hello", "POST /api/items", "WS /ws"] },
+  });
+
+  const result = await readPackage(directory);
+  assert.equal(result.ok, true, result.problems.join("\n"));
+  assert.deepEqual(result.manifest.routes, ["GET /hello", "POST /api/items", "WS /ws"]);
+});
+
+test("routes are validated for format, duplicates, count, and shape", async (t) => {
+  const root = await temporaryRoot();
+  t.after(() => import("node:fs/promises").then(({ rm }) => rm(root, { recursive: true, force: true })));
+
+  const cases = [
+    { routes: ["get /hello"], expected: /routes\[0\]/u },
+    { routes: ["GET /hello", "GET /hello"], expected: /duplicates/u },
+    { routes: "GET /hello", expected: /must be an array/u },
+  ];
+  for (const { routes, expected } of cases) {
+    const { directory } = await writePackage(root, { manifest: { routes } });
+    const result = await readPackage(directory);
+    assert.equal(result.ok, false);
+    assert.match(result.problems.join("\n"), expected);
+  }
+
+  const { directory } = await writePackage(root, {
+    manifest: { routes: ["GET /a", "GET /b"] },
+  });
+  const limited = await readPackage(directory, { ...LIMITS, maxRoutes: 1 });
+  assert.equal(limited.ok, false);
+  assert.match(limited.problems.join("\n"), /more than 1 route/u);
 });

@@ -24,6 +24,7 @@ Do not edit it by hand.
           "requires": { "uvp": ">=0.3.0", "features": ["websocket"] },
           "license": { "spdx": "MIT", "file": "LICENSE" },
           "provenance": { "author": "Acme", "createdAt": "2026-10-18T00:00:00Z" },
+          "routes": ["GET /hello"],
           "files": [
             { "path": "src/main.cc", "digest": "sha256:…", "bytes": 1234 }
           ]
