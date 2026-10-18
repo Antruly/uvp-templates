@@ -825,7 +825,9 @@ export const buildIndex = async (root, limits = LIMITS) => {
         path: `packages/${idEntry.name}/${versionEntry.name}`,
         digest: pkg.digest,
         ...pkg.manifest,
-        files: pkg.files,
+        // The declared list, not the reader's observations: the index repeats
+        // the manifest's path/digest/bytes entries, and a reader that rejects
+        // unknown keys must not meet the reader's `binary` observation here.
       });
     }
     if (versions.length === 0) continue;
