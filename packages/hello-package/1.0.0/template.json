@@ -1,0 +1,55 @@
+{
+  "schema": "uvp.template/1",
+  "id": "hello-package",
+  "version": "1.0.0",
+  "name": "Hello package",
+  "description": "The hello-http service packaged as a standard uvp template package.",
+  "category": "backend",
+  "tags": [
+    "hello",
+    "http",
+    "example"
+  ],
+  "requires": {
+    "uvp": ">=0.4.0",
+    "libuvcpp": ">=1.7.0",
+    "features": [
+      "websocket"
+    ]
+  },
+  "routes": [
+    "GET /hello"
+  ],
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "digest": "sha256:f94a244691430404dd1108c144d0825ed2ab56789f025541fa62303d049ca799",
+      "bytes": 3180
+    },
+    {
+      "path": "src/main.cpp",
+      "digest": "sha256:1c3879e6d974fe5c2adf68a3e4e6675d66de1db84cc6eafaf806ae6842269923",
+      "bytes": 1259
+    },
+    {
+      "path": "README.md",
+      "digest": "sha256:58f0f848a683500c8f683d746a17017f285b7ec1d58fc33d96dd0915554da9f5",
+      "bytes": 930
+    },
+    {
+      "path": ".gitignore",
+      "digest": "sha256:35a90ad3428eff1b8b8b5908172b44164e55963a1b37aa6e9b8a1c50b0dd32f1",
+      "bytes": 29
+    }
+  ],
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "provenance": {
+    "author": "Antruly",
+    "source": "https://github.com/Antruly/uvp",
+    "revision": "bc17f63",
+    "createdAt": "2026-10-19T00:00:00Z"
+  }
+}

@@ -1,4 +1,68 @@
 {
-  "packages": [],
+  "packages": [
+    {
+      "id": "hello-package",
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "category": "backend",
+          "description": "The hello-http service packaged as a standard uvp template package.",
+          "digest": "sha256:b3d3e2dbcbd9ee5f8b93d331bcaa0eeb7db559c65973d140f43dac35f5849618",
+          "files": [
+            {
+              "bytes": 3180,
+              "digest": "sha256:f94a244691430404dd1108c144d0825ed2ab56789f025541fa62303d049ca799",
+              "path": "CMakeLists.txt"
+            },
+            {
+              "bytes": 1259,
+              "digest": "sha256:1c3879e6d974fe5c2adf68a3e4e6675d66de1db84cc6eafaf806ae6842269923",
+              "path": "src/main.cpp"
+            },
+            {
+              "bytes": 930,
+              "digest": "sha256:58f0f848a683500c8f683d746a17017f285b7ec1d58fc33d96dd0915554da9f5",
+              "path": "README.md"
+            },
+            {
+              "bytes": 29,
+              "digest": "sha256:35a90ad3428eff1b8b8b5908172b44164e55963a1b37aa6e9b8a1c50b0dd32f1",
+              "path": ".gitignore"
+            }
+          ],
+          "id": "hello-package",
+          "license": {
+            "file": "LICENSE",
+            "spdx": "MIT"
+          },
+          "name": "Hello package",
+          "path": "packages/hello-package/1.0.0",
+          "provenance": {
+            "author": "Antruly",
+            "createdAt": "2026-10-19T00:00:00Z",
+            "revision": "bc17f63",
+            "source": "https://github.com/Antruly/uvp"
+          },
+          "requires": {
+            "features": [
+              "websocket"
+            ],
+            "libuvcpp": ">=1.7.0",
+            "uvp": ">=0.4.0"
+          },
+          "routes": [
+            "GET /hello"
+          ],
+          "schema": "uvp.template/1",
+          "tags": [
+            "hello",
+            "http",
+            "example"
+          ],
+          "version": "1.0.0"
+        }
+      ]
+    }
+  ],
   "schema": "uvp.registry/1"
 }

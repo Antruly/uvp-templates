@@ -42,6 +42,18 @@ test("a release outranks a prerelease for latest", async (t) => {
   assert.equal(index.packages[0].latest, "1.0.0");
 });
 
+test("the index repeats the declared path/digest/bytes list, not reader observations", async (t) => {
+  const root = await temporaryRoot();
+  t.after(() => cleanup(root));
+  await writePackage(root, { version: "1.0.0" });
+
+  const { problems, index } = await buildIndex(root);
+  assert.deepEqual(problems, []);
+  const files = index.packages[0].versions[0].files;
+  assert.equal(files.length, 1);
+  assert.deepEqual(Object.keys(files[0]).sort(), ["bytes", "digest", "path"]);
+});
+
 test("the index is deterministic", async (t) => {
   const root = await temporaryRoot();
   t.after(() => cleanup(root));
