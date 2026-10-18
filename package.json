@@ -1,0 +1,17 @@
+{
+  "name": "uvp-templates",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The official uvp template registry",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "validate": "node scripts/validate-packages.mjs",
+    "index": "node scripts/build-index.mjs --write",
+    "index:check": "node scripts/build-index.mjs --check",
+    "test": "node --test"
+  }
+}

@@ -1,0 +1,42 @@
+name: Package proposal
+description: Propose a template package before writing it
+labels: [package]
+body:
+  - type: input
+    id: id
+    attributes:
+      label: Proposed id
+      description: A lowercase slug, for example `acme-dashboard`.
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options: [frontend, backend, fullstack, module]
+    validations:
+      required: true
+  - type: input
+    id: framework
+    attributes:
+      label: Framework (optional)
+      description: h5, vue3, react, svelte, alpine, or htmx.
+  - type: textarea
+    id: purpose
+    attributes:
+      label: What it demonstrates
+      description: The capability or service shape this package adds.
+    validations:
+      required: true
+  - type: textarea
+    id: requirements
+    attributes:
+      label: libuvcpp requirements
+      description: The features it needs and how you will verify the build.
+  - type: textarea
+    id: licence
+    attributes:
+      label: Licence and provenance
+      description: The licence you will ship and where the source comes from.
+    validations:
+      required: true

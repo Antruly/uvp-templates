@@ -1,0 +1,39 @@
+name: uvp runtime
+
+# The runtime lane compiles and runs submitted C++ on an ephemeral runner. It is
+# gated twice: the repository variable UVP_RUNTIME must be "1", and a pull
+# request needs the `runtime-check` label (a maintainer applies it after reading
+# the source). Fork PRs without the label never reach a runner.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runtime:
+    name: uvp runtime
+    if: >-
+      vars.UVP_RUNTIME == '1' &&
+      (github.event_name == 'workflow_dispatch' ||
+       contains(github.event.pull_request.labels.*.name, 'runtime-check'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Install the latest published uvp
+        run: npm install --global uvp-agents@latest
+      - name: Report the client version
+        run: uvp --version
+      - name: Validate, import, generate, and build every package
+        run: node scripts/uvp-runtime.mjs

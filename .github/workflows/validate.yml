@@ -1,0 +1,36 @@
+name: validate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Registry tests
+        run: node --test
+      - name: Index is current
+        run: node scripts/build-index.mjs --check
+      - name: Package preflight and scan
+        run: node scripts/validate-packages.mjs
+      - name: PR policy (disclosure and human owner)
+        if: github.event_name == 'pull_request'
+        run: node scripts/check-pr-policy.mjs
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}

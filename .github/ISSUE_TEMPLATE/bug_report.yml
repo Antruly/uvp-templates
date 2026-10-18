@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a problem with the registry, its checks, or a published package
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not report a credential leak here. Use the repository's **Security**
+        tab for a private report; see SECURITY.md.
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed
+      description: What happened, with the command and the smallest useful output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What you expected, grounded in the docs or a known-good version.
+    validations:
+      required: true
+  - type: input
+    id: package
+    attributes:
+      label: Package or commit
+      description: The id@version and commit you observed.
+  - type: textarea
+    id: unknown
+    attributes:
+      label: What you could not check
+      description: Name the lane or evidence you could not obtain. Write NOT_ENOUGH_INFO when that is the honest answer.
