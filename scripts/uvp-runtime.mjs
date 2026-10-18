@@ -58,7 +58,8 @@ if (!templateHelp.ok) {
   process.exit(UNDETERMINED);
 }
 const initHelp = run("uvp", ["init", "--help"], { timeoutMs: 30_000 });
-if (!initHelp.ok || !initHelp.stdout.includes("--template-package")) {
+const initHelpText = `${initHelp.stdout}\n${initHelp.stderr}`;
+if (!initHelp.ok || !initHelpText.includes("--template-package")) {
   console.error("undetermined: the published uvp does not expose `uvp init --template-package`");
   console.error(initHelp.stderr);
   process.exit(UNDETERMINED);

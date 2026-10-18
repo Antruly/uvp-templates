@@ -20,12 +20,21 @@ test("a human-authored submission passes", () => {
 });
 
 test("an AI-assisted submission with a human owner passes", () => {
-  const result = check("AI-assisted: yes\nHuman owner: @Antruly\n");
-  assert.equal(result.status, 0, result.stderr);
+  for (const body of [
+    "AI-assisted: yes\nHuman owner: @Antruly\n",
+    "- AI-assisted: yes\n- Human owner: @Antruly\n",
+  ]) {
+    const result = check(body);
+    assert.equal(result.status, 0, `${body}\n${result.stderr}`);
+  }
 });
 
 test("an AI-assisted submission without a human owner fails", () => {
-  for (const body of ["AI-assisted: yes\nHuman owner: none\n", "AI-assisted: yes\n"]) {
+  for (const body of [
+    "AI-assisted: yes\nHuman owner: none\n",
+    "- AI-assisted: yes\n- Human owner: none\n",
+    "AI-assisted: yes\n",
+  ]) {
     const result = check(body);
     assert.equal(result.status, 1, body);
   }

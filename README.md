@@ -17,9 +17,10 @@ Bootstrap. The following is observed, not assumed:
 - uvp's template-package schema and validator landed in
   [uvp#244](https://github.com/Antruly/uvp/pull/244) and
   [uvp#245](https://github.com/Antruly/uvp/pull/245).
-- The local store, search, export, and scan are being reviewed in
-  [uvp#236](https://github.com/Antruly/uvp/issues/236). The published
-  `uvp-agents@0.2.0` does **not** expose the template commands yet.
+- The latest published `uvp-agents` is **0.2.0** (observed 2026-10-18) and does
+  not expose the template commands: `uvp template validate --help` answers
+  `No command named "template"`. The local store, search, export, and scan are
+  being reviewed in [uvp#236](https://github.com/Antruly/uvp/issues/236).
 - This repository therefore runs the **structural** lanes today: package shape,
   paths, limits, digests, licence/provenance, a bounded secret/PII scan, and
   index determinism.
