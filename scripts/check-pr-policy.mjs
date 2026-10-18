@@ -13,7 +13,7 @@ if (body.trim() === "") {
   process.exit(1);
 }
 
-const assisted = /^\s*AI-assisted:\s*(yes|no)\s*$/im.exec(body);
+const assisted = /^\s*(?:[-*]\s*)?AI-assisted:\s*(yes|no)\s*$/im.exec(body);
 if (assisted === null) {
   console.error("PR body must contain a line 'AI-assisted: yes' or 'AI-assisted: no'");
   process.exit(1);
@@ -23,7 +23,7 @@ if (assisted[1].toLowerCase() === "no") {
   process.exit(0);
 }
 
-const owner = /^\s*Human owner:\s*(.+)$/im.exec(body);
+const owner = /^\s*(?:[-*]\s*)?Human owner:\s*(.+)$/im.exec(body);
 const value = owner?.[1]?.trim() ?? "";
 if (
   value === "" ||
