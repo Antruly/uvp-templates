@@ -35,6 +35,7 @@ packages/<id>/<version>/
 - the two-way `files[]`/`files/` check, digests, byte counts, and binary
   placement;
 - licence, provenance, timestamp, and source URL shape;
+- optional `routes` entries (`METHOD /path`, at most 64, unique);
 - a bounded credential/PII scan (see [review-policy.md](review-policy.md)).
 
 ## What it does not establish
