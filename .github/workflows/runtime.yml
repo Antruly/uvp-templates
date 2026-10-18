@@ -31,6 +31,34 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
+      - name: Install libuvcpp
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # The latest Linux x64 release archive. It ships pkg-config files and
+          # no CMake package, which is the route the generated projects use;
+          # the archive is the only libuvcpp the lane needs.
+          asset="$(gh api repos/Antruly/libuvcpp/releases/latest \
+            --jq '.assets[] | select(.name | test("linux-x64\\.zip$")) | .browser_download_url' \
+            | head -1)"
+          if [ -z "$asset" ]; then
+            echo "the latest libuvcpp release has no linux-x64 zip asset"
+            exit 1
+          fi
+          curl -fsSL "$asset" -o "$RUNNER_TEMP/libuvcpp.zip"
+          unzip -q "$RUNNER_TEMP/libuvcpp.zip" -d "$RUNNER_TEMP/libuvcpp"
+          root="$(find "$RUNNER_TEMP/libuvcpp" -mindepth 1 -maxdepth 1 -type d -name 'libuvcpp-*' | head -1)"
+          if [ -z "$root" ]; then
+            echo "the libuvcpp archive did not contain a libuvcpp-* directory"
+            exit 1
+          fi
+          {
+            echo "LIBUVCPP_ROOT=$root"
+            echo "PKG_CONFIG_PATH=$root/lib/pkgconfig"
+            echo "LD_LIBRARY_PATH=$root/lib"
+          } >> "$GITHUB_ENV"
+          echo "libuvcpp: $root"
       - name: Install the latest published uvp
         run: npm install --global uvp-agents@latest
       - name: Report the client version
