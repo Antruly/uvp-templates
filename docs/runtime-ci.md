@@ -43,11 +43,12 @@ not label a PR you have not read.
 
 ## Enabling the check
 
-When the published uvp supports the commands:
+The published uvp supports the commands. Two of the three steps are in place:
 
-1. Set the repository variable: `gh variable set UVP_RUNTIME --body 1`.
-2. Run the workflow once on `main` to confirm it is green.
-3. Add `uvp runtime` to the required status checks for `main`.
+1. Set the repository variable: `gh variable set UVP_RUNTIME --body 1`. Done.
+2. Run the workflow once on `main` to confirm it is green. Not yet recorded.
+3. Add `uvp runtime` to the required status checks for `main`. Done.
 
-Until all three are done, the lane is not a merge gate and the registry does not
-claim build-verified packages.
+The lane is therefore a merge gate for a labelled pull request. The
+`workflow_dispatch` run on `main` is the remaining confirmation that the lane
+itself is healthy when no pull request selects it.

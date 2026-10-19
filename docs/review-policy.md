@@ -12,8 +12,9 @@ approval.
 | Human review | the complete diff and the claims in the README | a substitute for a lane that did not run |
 
 The `runtime` lane is gated by the repository variable `UVP_RUNTIME=1` and the
-`runtime-check` label. It is off while the published uvp does not expose the
-template commands; a structural pass is never presented as a build pass.
+`runtime-check` label. The published uvp exposes the template commands, so the
+lane runs for a labelled pull request; a structural pass is never presented as a
+build pass.
 
 ## What a reviewer checks
 
