@@ -17,17 +17,17 @@ Bootstrap. The following is observed, not assumed:
 - uvp's template-package schema and validator landed in
   [uvp#244](https://github.com/Antruly/uvp/pull/244) and
   [uvp#245](https://github.com/Antruly/uvp/pull/245).
-- The latest published `uvp-agents` is **0.2.0** (observed 2026-10-18) and does
-  not expose the template commands: `uvp template validate --help` answers
-  `No command named "template"`. The local store, search, export, and scan are
-  being reviewed in [uvp#236](https://github.com/Antruly/uvp/issues/236).
-- This repository therefore runs the **structural** lanes today: package shape,
-  paths, limits, digests, licence/provenance, a bounded secret/PII scan, and
-  index determinism.
-- The **runtime** lane — install the latest published uvp, validate/import the
-  package, generate a workspace, build it against libuvcpp, and run it — is
-  present but gated. It activates when the published uvp exposes the template
-  commands. Until then, no package is described as build-verified.
+- The latest published `uvp-agents` is **0.4.0** (observed 2026-10-20) and
+  exposes the template commands: `uvp template validate`, `import`, `search`,
+  `get`, `export`, and `remove` all run, and `uvp init --template-package`
+  generates a workspace from a stored package.
+- This repository runs the **structural** lanes on every pull request: package
+  shape, paths, limits, digests, licence/provenance, a bounded secret/PII scan,
+  and index determinism.
+- The **runtime** lane — install the published uvp, validate/import the
+  package, generate a workspace, build it against libuvcpp, and run it — runs
+  when a maintainer applies the `runtime-check` label. It is gated by review,
+  not by version detection, because it compiles and runs submitted C++.
 
 A green structural run is evidence about the package's bytes and metadata. It is
 not evidence that the generated C++ builds or runs.
