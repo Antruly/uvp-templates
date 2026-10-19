@@ -1,0 +1,10 @@
+{
+  "uvp": 1,
+  "name": "{{project.name}}",
+  "binary": "{{project.name}}",
+  "port": {{project.port}},
+  "features": [],
+  "requirements": {
+    "libuvcpp": ">=1.7.0"
+  }
+}
