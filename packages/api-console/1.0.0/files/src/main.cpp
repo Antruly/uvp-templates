@@ -25,6 +25,11 @@
 
 #include <req/uvcpp_work.h>
 
+#include <web/uvcpp_http_client.h>
+#include <web/uvcpp_http_request.h>
+#include <web/uvcpp_http_reply.h>
+#include <ssl/uvcpp_ssl.h>
+
 #include <algorithm>
 #include <cctype>
 #include <cerrno>
@@ -100,7 +105,6 @@ struct StoredRequest {
 std::deque<HistoryEntry> g_history;
 std::vector<StoredRequest> g_collections;
 std::string g_collections_path;
-std::string g_uvp_bin = "uvp";
 unsigned long long g_seq = 0;
 
 const std::size_t kHistoryLimit = 100;
@@ -302,283 +306,142 @@ std::string DumpJson(const uvcpp_json& j) {
 // Outbound request (runs on a worker thread)
 // ---------------------------------------------------------------------------
 
-std::string FindOnPath(const std::string& name) {
-  const char* path = std::getenv("PATH");
-  if (path == nullptr) return std::string();
-  const std::string paths(path);
-  std::size_t start = 0;
-  while (start <= paths.size()) {
-    const std::size_t end = paths.find(':', start);
-    const std::string dir =
-        paths.substr(start, end == std::string::npos ? std::string::npos : end - start);
-    if (!dir.empty()) {
-      const std::string candidate = dir + "/" + name;
-      if (access(candidate.c_str(), X_OK) == 0) return candidate;
-    }
-    if (end == std::string::npos) break;
-    start = end + 1;
-  }
-  return std::string();
-}
-
-std::string ResolveUvpBinary() {
-  const char* from_env = std::getenv("UVP_BIN");
-  if (from_env != nullptr && from_env[0] != '\0') return std::string(from_env);
-
-  const std::string on_path = FindOnPath("uvp");
-  if (!on_path.empty()) return on_path;
-
-  const char* home = std::getenv("HOME");
-  if (home != nullptr && home[0] != '\0') {
-    const std::string local = std::string(home) + "/node_modules/.bin/uvp";
-    if (access(local.c_str(), X_OK) == 0) return local;
-  }
-  return std::string("uvp");
-}
-
-#if defined(_WIN32)
-struct ProcResult {
-  int exit_code = -1;
-  bool timed_out = false;
-  bool spawn_failed = true;
-  std::string out;
-  std::string err;
-};
-
-ProcResult RunProcess(const std::vector<std::string>&, int) { return ProcResult(); }
-#else
-struct ProcResult {
-  int exit_code = -1;
-  bool timed_out = false;
-  bool spawn_failed = false;
-  std::string out;
-  std::string err;
-};
-
-// Run one child process without a shell. The argument vector is built before
-// fork() so the child touches nothing but async-signal-safe calls before exec.
-ProcResult RunProcess(const std::vector<std::string>& args, int timeout_ms) {
-  ProcResult result;
-  if (args.empty()) {
-    result.spawn_failed = true;
-    return result;
-  }
-
-  std::vector<char*> argv;
-  argv.reserve(args.size() + 1);
-  for (const auto& a : args) argv.push_back(const_cast<char*>(a.c_str()));
-  argv.push_back(nullptr);
-
-  int out_pipe[2] = {-1, -1};
-  int err_pipe[2] = {-1, -1};
-  if (pipe(out_pipe) != 0) {
-    result.spawn_failed = true;
-    return result;
-  }
-  if (pipe(err_pipe) != 0) {
-    close(out_pipe[0]);
-    close(out_pipe[1]);
-    result.spawn_failed = true;
-    return result;
-  }
-
-  const pid_t pid = fork();
-  if (pid == 0) {
-    const int devnull = open("/dev/null", O_RDONLY);
-    if (devnull >= 0) {
-      dup2(devnull, STDIN_FILENO);
-      close(devnull);
-    }
-    dup2(out_pipe[1], STDOUT_FILENO);
-    dup2(err_pipe[1], STDERR_FILENO);
-    close(out_pipe[0]);
-    close(out_pipe[1]);
-    close(err_pipe[0]);
-    close(err_pipe[1]);
-    execvp(argv[0], argv.data());
-    _exit(127);
-  }
-
-  if (pid < 0) {
-    close(out_pipe[0]);
-    close(out_pipe[1]);
-    close(err_pipe[0]);
-    close(err_pipe[1]);
-    result.spawn_failed = true;
-    return result;
-  }
-
-  close(out_pipe[1]);
-  close(err_pipe[1]);
-  fcntl(out_pipe[0], F_SETFL, fcntl(out_pipe[0], F_GETFL, 0) | O_NONBLOCK);
-  fcntl(err_pipe[0], F_SETFL, fcntl(err_pipe[0], F_GETFL, 0) | O_NONBLOCK);
-
-  const std::size_t kOutCap = 16u * 1024u * 1024u;
-  const std::size_t kErrCap = 64u * 1024u;
-  bool out_open = true;
-  bool err_open = true;
-  const auto deadline =
-      std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout_ms);
-  char buf[65536];
-
-  auto drain = [&](int fd, std::string& dst, std::size_t cap, bool& open_flag) {
-    for (;;) {
-      const ssize_t n = read(fd, buf, sizeof(buf));
-      if (n > 0) {
-        if (dst.size() < cap) {
-          dst.append(buf, std::min(static_cast<std::size_t>(n), cap - dst.size()));
-        }
-        continue;
-      }
-      if (n == 0) {
-        close(fd);
-        open_flag = false;
-        return;
-      }
-      if (errno == EINTR) continue;
-      if (errno == EAGAIN || errno == EWOULDBLOCK) return;
-      close(fd);
-      open_flag = false;
-      return;
-    }
-  };
-
-  while (out_open || err_open) {
-    struct pollfd fds[2];
-    int count = 0;
-    if (out_open) {
-      fds[count].fd = out_pipe[0];
-      fds[count].events = POLLIN;
-      fds[count].revents = 0;
-      ++count;
-    }
-    if (err_open) {
-      fds[count].fd = err_pipe[0];
-      fds[count].events = POLLIN;
-      fds[count].revents = 0;
-      ++count;
-    }
-    const int ready = poll(fds, static_cast<nfds_t>(count), 50);
-    if (ready < 0 && errno != EINTR) break;
-    if (out_open) drain(out_pipe[0], result.out, kOutCap, out_open);
-    if (err_open) drain(err_pipe[0], result.err, kErrCap, err_open);
-    if (std::chrono::steady_clock::now() >= deadline) {
-      kill(pid, SIGKILL);
-      result.timed_out = true;
-      break;
-    }
-  }
-
-  if (out_open) close(out_pipe[0]);
-  if (err_open) close(err_pipe[0]);
-
-  int status = 0;
-  while (waitpid(pid, &status, 0) < 0 && errno == EINTR) {
-  }
-  if (WIFEXITED(status)) {
-    result.exit_code = WEXITSTATUS(status);
-  } else if (WIFSIGNALED(status)) {
-    result.exit_code = 128 + WTERMSIG(status);
-  }
-  if (result.timed_out) result.exit_code = -1;
-  return result;
-}
-#endif  // !defined(_WIN32)
-
-// The outbound exchange is performed by uvp's own `http` tool. That is the
-// same operation the uvp MCP server serves, and its TLS path is the one uvp
-// ships and tests. This process runs on a libuv worker thread, so waiting for
-// the child never blocks the web loop.
+// The outbound exchange is performed using libuvcpp's public HTTP client.
+// This client supports HTTPS with proper TLS handshake handling as of libuvcpp 1.8.1.
+// This process runs on a libuv worker thread, so blocking never blocks the web loop.
 void PerformSend(const SavedRequest& in, OutboundResult& out) {
   const auto started = std::chrono::steady_clock::now();
 
   if (in.body.size() > 512u * 1024u) {
-    out.error = "request body exceeds the 512 KiB limit of the outbound bridge";
+    out.error = "request body exceeds the 512 KiB limit";
     return;
   }
 
-  std::string method = in.method;
-  std::transform(method.begin(), method.end(), method.begin(),
-                 [](unsigned char c) { return static_cast<char>(std::toupper(c)); });
+  try {
+    uvcpp_http_client client;
+    
+    // The TLS context must outlive the client's use of it, so it is declared
+    // here rather than inside the branch that configures it.
+    std::unique_ptr<uvcpp_ssl_context> tls_ctx;
+    if (in.url.compare(0, 8, "https://") == 0) {
+      tls_ctx.reset(new uvcpp_ssl_context(tls_mode::CLIENT));
+      tls_ctx->set_verify_mode(in.verify_tls ? tls_verify_mode::PEER
+                                             : tls_verify_mode::NONE);
+      client.set_ssl_context(tls_ctx.get());
+    }
 
-  std::vector<std::string> args;
-  args.push_back(g_uvp_bin);
-  args.push_back("http");
-  args.push_back(method);
-  args.push_back(in.url);
-  args.push_back("--json");
-  args.push_back("--timeout");
-  args.push_back(std::to_string(in.timeout_ms));
-  if (!in.verify_tls) args.push_back("--no-tls");
-  for (const auto& h : in.headers) {
-    if (h.first.empty()) continue;
-    args.push_back("--header");
-    args.push_back(h.first + ": " + h.second);
-  }
-  if (!in.body.empty()) {
-    args.push_back("--data");
-    args.push_back(in.body);
-  }
+    // Parse URL: scheme://host[:port]/path?query
+    const std::string& url = in.url;
+    std::size_t scheme_end = url.find("://");
+    if (scheme_end == std::string::npos) {
+      out.error = "invalid URL: missing scheme";
+      return;
+    }
+    
+    const std::string scheme = url.substr(0, scheme_end);
+    const std::size_t host_start = scheme_end + 3;
+    
+    // Find the path start (first / after host)
+    std::size_t path_start = url.find('/', host_start);
+    if (path_start == std::string::npos) {
+      path_start = url.size();
+    }
+    
+    std::string host_port = url.substr(host_start, path_start - host_start);
+    std::string path = (path_start < url.size()) ? url.substr(path_start) : "/";
+    
+    // Extract host and port
+    int port = (scheme == "https") ? 443 : 80;
+    std::string host = host_port;
+    std::size_t colon_pos = host_port.rfind(':');
+    
+    if (colon_pos != std::string::npos && colon_pos > 0) {
+      // Check if this is IPv6 literal in brackets
+      if (host_port[0] != '[') {
+        host = host_port.substr(0, colon_pos);
+        try {
+          int p = std::stoi(host_port.substr(colon_pos + 1));
+          if (p > 0 && p < 65536) {
+            port = p;
+          } else {
+            out.error = "invalid port number";
+            return;
+          }
+        } catch (...) {
+          out.error = "invalid port number";
+          return;
+        }
+      }
+    }
 
-  const ProcResult proc = RunProcess(args, in.timeout_ms + 5000);
-  out.elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-                       std::chrono::steady_clock::now() - started).count();
+    // Determine HTTP method
+    http_method method = http_method::HTTP_GET;
+    std::string method_upper = in.method;
+    std::transform(method_upper.begin(), method_upper.end(), method_upper.begin(),
+                   [](unsigned char c) { return static_cast<char>(std::toupper(c)); });
 
-  if (proc.spawn_failed || (proc.exit_code == 127 && proc.out.empty())) {
-    out.error = "could not start '" + g_uvp_bin +
-                "' (set UVP_BIN to the uvp executable)";
-    return;
-  }
-  if (proc.timed_out) {
-    out.error = "timed out after " + std::to_string(in.timeout_ms + 5000) + " ms";
-    return;
-  }
-  if (proc.out.empty()) {
-    out.error = "uvp returned no output";
-    if (!proc.err.empty()) out.error += ": " + proc.err;
-    return;
-  }
+    if (method_upper == "GET") method = http_method::HTTP_GET;
+    else if (method_upper == "POST") method = http_method::HTTP_POST;
+    else if (method_upper == "PUT") method = http_method::HTTP_PUT;
+    else if (method_upper == "DELETE") method = http_method::HTTP_DELETE;
+    else if (method_upper == "HEAD") method = http_method::HTTP_HEAD;
+    else if (method_upper == "PATCH") method = http_method::HTTP_PATCH;
+    else if (method_upper == "OPTIONS") method = http_method::HTTP_OPTIONS;
+    else if (method_upper == "TRACE") method = http_method::HTTP_TRACE;
+    else if (method_upper == "CONNECT") method = http_method::HTTP_CONNECT;
 
-  uvcpp_json doc = uvcpp_json::parse(proc.out, nullptr, false);
-  if (doc.is_discarded() || !doc.is_object()) {
-    out.error = "uvp returned an unreadable response";
-    if (!proc.err.empty()) out.error += ": " + proc.err;
-    return;
-  }
+    // Build request
+    uvcpp_http_request req;
+    req.method = method;
+    req.url = path;
+    
+    // Add headers
+    for (const auto& h : in.headers) {
+      if (!h.first.empty()) {
+        req.set_header(h.first, h.second);
+      }
+    }
+    
+    // Set body if present
+    if (!in.body.empty()) {
+      req.body = uvcpp_buf(in.body.data(), in.body.size());
+    }
 
-  if (doc.contains("status") && doc["status"].is_number_integer()) {
+    // Connect to host:port
+    int connect_err = client.connect_wait(host.c_str(), port, in.timeout_ms);
+    if (connect_err != 0) {
+      out.error = "connection failed with libuv error code " + std::to_string(connect_err);
+      return;
+    }
+
+    // Send request and receive response
+    uvcpp_http_response resp;
+    int send_err = client.send_wait(req, resp, in.timeout_ms);
+    
+    out.elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - started).count();
+
+    if (send_err != 0) {
+      out.error = "request failed with libuv error code " + std::to_string(send_err);
+      return;
+    }
+
+    // Populate result from response
     out.ok = true;
-    out.status = doc["status"].get<int>();
-    if (doc.contains("status_text") && doc["status_text"].is_string()) {
-      out.status_text = doc["status_text"].get<std::string>();
+    out.status = static_cast<int>(resp.status_code);
+    out.status_text = resp.status_message;
+    out.body = resp.body.to_string();
+    
+    // Copy response headers
+    for (const auto& h : resp.headers) {
+      out.headers.push_back({h.name, h.value});
     }
-    if (doc.contains("headers") && doc["headers"].is_object()) {
-      for (auto it = doc["headers"].begin(); it != doc["headers"].end(); ++it) {
-        out.headers.push_back(std::make_pair(
-            it.key(),
-            it.value().is_string() ? it.value().get<std::string>() : it.value().dump()));
-      }
-    }
-    if (doc.contains("body") && doc["body"].is_object()) {
-      const uvcpp_json& body = doc["body"];
-      if (body.contains("text") && body["text"].is_string()) {
-        out.body = body["text"].get<std::string>();
-      }
-    }
-    if (doc.contains("timing") && doc["timing"].is_object()) {
-      const uvcpp_json& timing = doc["timing"];
-      if (timing.contains("total_ms") && timing["total_ms"].is_number()) {
-        out.elapsed_ms = static_cast<long long>(timing["total_ms"].get<double>());
-      }
-    }
-    return;
-  }
 
-  out.error = doc.value("message", std::string("uvp reported an error"));
-  if (doc.contains("code") && doc["code"].is_string()) {
-    out.error = doc["code"].get<std::string>() + ": " + out.error;
+  } catch (const std::exception& e) {
+    out.error = std::string("exception: ") + e.what();
+  } catch (...) {
+    out.error = "unknown exception during HTTP request";
   }
-  if (out.error.empty()) out.error = "uvp reported an error without a message";
 }
 
 uvcpp_json OutboundToJson(const OutboundResult& r, const SavedRequest& request) {
@@ -686,8 +549,6 @@ uvcpp_json HistoryToJson() {
 // ---------------------------------------------------------------------------
 
 int main(int argc, char** argv) {
-  g_uvp_bin = ResolveUvpBinary();
-
   int port = {{project.port}};
   if (argc > 1) {
     const int requested = std::atoi(argv[1]);
@@ -881,7 +742,7 @@ int main(int argc, char** argv) {
 
   std::cout << "{{project.name}} listening on http://127.0.0.1:" << app.bound_port()
             << "\n  document root: " << PublicDir()
-            << "\n  outbound engine: " << g_uvp_bin << " http --json\n"
+            << "\n  outbound engine: libuvcpp native HTTP client (1.8.1+)\n"
             << std::flush;
   app.join();
   return 0;

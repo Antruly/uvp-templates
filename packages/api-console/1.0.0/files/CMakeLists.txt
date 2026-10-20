@@ -22,14 +22,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #
 # Point UVCPP_ROOT or CMAKE_PREFIX_PATH at an unpacked release if it is not
 # installed in a standard prefix.
-find_package(uvcpp 1.7.0 CONFIG QUIET)
+find_package(uvcpp 1.8.1 CONFIG QUIET)
 
 if(uvcpp_FOUND)
   set(UVP_UVCPP_TARGET uvcpp::uvcpp)
   set(UVP_UVCPP_ROUTE "CMake package (${uvcpp_DIR})")
 else()
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(UVCPP REQUIRED IMPORTED_TARGET "uvcpp>=1.7.0")
+  pkg_check_modules(UVCPP REQUIRED IMPORTED_TARGET "uvcpp>=1.8.1")
   set(UVP_UVCPP_TARGET PkgConfig::UVCPP)
   set(UVP_UVCPP_ROUTE "pkg-config (${UVCPP_VERSION})")
 endif()
