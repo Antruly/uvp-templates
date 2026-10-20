@@ -1,6 +1,108 @@
 {
   "packages": [
     {
+      "id": "api-console",
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "category": "fullstack",
+          "description": "A Postman-style HTTP debugging console: libuvcpp JSON API plus a static SPA with sandboxed HTML preview, history, and saved collections.",
+          "digest": "sha256:99046cc9e19991afb4abf70aca7ee8bd0e170e4ebd51b00e9a838f06071b77b3",
+          "files": [
+            {
+              "bytes": 35,
+              "digest": "sha256:a231854f0066517ea7c8a1bf947890b903881c25b551329d4a125368c3b97c1c",
+              "path": ".gitignore"
+            },
+            {
+              "bytes": 3714,
+              "digest": "sha256:ecf1971b5ff0a65df19b23c1a35aa235f35f549b38710c8ea2089a8d21997aff",
+              "path": "CMakeLists.txt"
+            },
+            {
+              "bytes": 2657,
+              "digest": "sha256:efac8a5e42d9635a4a779335f8bb24adb71d5c5933d4f85b6e0ec5be04050bb7",
+              "path": "README.md"
+            },
+            {
+              "bytes": 174,
+              "digest": "sha256:1abe1c96f3c38943c049f9c6aa5c619e16ccd5718853d856eee1c99b3c24b00f",
+              "path": "uvp.json"
+            },
+            {
+              "bytes": 16399,
+              "digest": "sha256:810c4de4b54023a77d93106e60f8dc4950740ddd7b7950d970c45984dfceb8f7",
+              "path": "public/app.js"
+            },
+            {
+              "bytes": 5483,
+              "digest": "sha256:dc6526b2fd9ea6a6373d9de50803415fe6d06d68b4bc36a6f0058fca05468394",
+              "path": "public/index.html"
+            },
+            {
+              "bytes": 10449,
+              "digest": "sha256:0dae55318c85f4decf26b7731b4ee56a38c0aa4e26578d6252e160dfff09227d",
+              "path": "public/style.css"
+            },
+            {
+              "bytes": 26851,
+              "digest": "sha256:55576259f43358aa34fc7f75661165b28fef8a9a7d9de667b26fd85b4dcf9526",
+              "path": "src/main.cpp"
+            }
+          ],
+          "framework": "h5",
+          "id": "api-console",
+          "license": {
+            "file": "LICENSE",
+            "spdx": "MIT"
+          },
+          "name": "API console",
+          "path": "packages/api-console/1.0.0",
+          "preview": "preview.png",
+          "provenance": {
+            "author": "Antruly",
+            "createdAt": "2026-10-20T00:00:00Z",
+            "source": "https://github.com/Antruly/uvp-templates"
+          },
+          "requires": {
+            "libuvcpp": ">=1.7.0",
+            "uvp": ">=0.4.0"
+          },
+          "routes": [
+            "GET /healthz",
+            "GET /api/health",
+            "POST /api/send",
+            "GET /api/history",
+            "DELETE /api/history",
+            "GET /api/collections",
+            "POST /api/collections",
+            "DELETE /api/collections/:id"
+          ],
+          "schema": "uvp.template/1",
+          "tags": [
+            "http",
+            "client",
+            "console",
+            "api",
+            "postman",
+            "preview"
+          ],
+          "variables": {
+            "name": {
+              "default": "api-console",
+              "required": true,
+              "type": "slug"
+            },
+            "port": {
+              "default": 8090,
+              "type": "port"
+            }
+          },
+          "version": "1.0.0"
+        }
+      ]
+    },
+    {
       "id": "hello-package",
       "latest": "1.0.0",
       "versions": [
