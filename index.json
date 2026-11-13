@@ -1,6 +1,140 @@
 {
   "packages": [
     {
+      "id": "admin-console",
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "category": "fullstack",
+          "description": "A Vue 3 administration shell served by a libuvcpp HTTP service, with an overview API and basic theme and locale preferences.",
+          "digest": "sha256:17e92c97edd4750bc6d4396c254aefe34775f7ce85c60dee429b46b4481c9ff2",
+          "files": [
+            {
+              "bytes": 1057,
+              "digest": "sha256:dc928ecc4b5d0a87fbbfd847dba7bc16a11278539fe0ea5b1a3336db72c6481c",
+              "path": "CMakeLists.txt"
+            },
+            {
+              "bytes": 63,
+              "digest": "sha256:ff790ca66ba2c08fe853534f30650adaf1fe55a180925d395def9fde4c6ebec8",
+              "path": ".gitignore"
+            },
+            {
+              "bytes": 1026,
+              "digest": "sha256:8a82a519a0a652588d3ede9c042a3d98bb2bfffe3b88df9c7e439a8190c72494",
+              "path": "README.md"
+            },
+            {
+              "bytes": 1210,
+              "digest": "sha256:e749633fca78bb81b78f1ff398de6f1b95e75bc35e4d7b9eff96f00f73d8bd94",
+              "path": "src/main.cpp"
+            },
+            {
+              "bytes": 351,
+              "digest": "sha256:dedbb572fd43ab6724d8e2b6ed80a11b801c229c5de261123de18ecada8b76a5",
+              "path": "frontend/index.html"
+            },
+            {
+              "bytes": 527,
+              "digest": "sha256:fd8c185e5dbbe680a5cb7955969b70fb2294e6d48caa15c6bd5af39f42ac5dac",
+              "path": "frontend/package.json"
+            },
+            {
+              "bytes": 52899,
+              "digest": "sha256:b3b49a37d37b94a31b937aab2b6150ad0e3e2f7aa4e93736f791460f6f50d70f",
+              "path": "frontend/package-lock.json"
+            },
+            {
+              "bytes": 448,
+              "digest": "sha256:f07af4df316c7be29b11fb1d0383e9a23b3bbc35b6900f22bfbc502ecd17046a",
+              "path": "frontend/tsconfig.json"
+            },
+            {
+              "bytes": 312,
+              "digest": "sha256:9fa56b15b9fb2d38f8adb6378c78919582328f20322c36b15c3aec92f47e68d1",
+              "path": "frontend/vite.config.ts"
+            },
+            {
+              "bytes": 524,
+              "digest": "sha256:536b82d77c8ba4694251e966a1dd3a8b1cf30985e580923a6dcc398ef81f2efe",
+              "path": "frontend/src/main.ts"
+            },
+            {
+              "bytes": 2332,
+              "digest": "sha256:55bee81bcfbe2f82280822871d0611cde491c91cda9e8b39ae84c706b5e7b2f3",
+              "path": "frontend/src/App.vue"
+            },
+            {
+              "bytes": 617,
+              "digest": "sha256:a372461dc81c8384cf3a02e74de6bfe7b7f30ab2d48b8065b815e4c31b0aad75",
+              "path": "frontend/src/api.ts"
+            },
+            {
+              "bytes": 7137,
+              "digest": "sha256:6bf59b0dda1d9fd949d1367ba4fc8056995d96d3653d26e70615392f5dfd0306",
+              "path": "frontend/src/style.css"
+            },
+            {
+              "bytes": 2804,
+              "digest": "sha256:f39bfa6e68dd40d451dc7a49e771e2912de19110a37beada0f76cca7ecf9b3d3",
+              "path": "frontend/src/views/OverviewView.vue"
+            },
+            {
+              "bytes": 621,
+              "digest": "sha256:ae4b346cc544347c045d67c20be0a6637442c62d466eca77810bd17c6e8a5d1d",
+              "path": "frontend/src/views/SettingsView.vue"
+            }
+          ],
+          "framework": "vue3",
+          "id": "admin-console",
+          "license": {
+            "file": "LICENSE",
+            "spdx": "MIT"
+          },
+          "name": "Vue admin console",
+          "path": "packages/admin-console/1.0.0",
+          "provenance": {
+            "author": "Antruly",
+            "createdAt": "2026-11-13T13:25:00Z",
+            "revision": "1e48bc303b45643ca21da61f788443f931a5930c",
+            "source": "https://github.com/Antruly/UvNVR"
+          },
+          "requires": {
+            "features": [],
+            "libuvcpp": ">=1.9.1 <2.0.0",
+            "uvp": ">=0.4.0"
+          },
+          "routes": [
+            "GET /healthz",
+            "GET /api/overview",
+            "GET /",
+            "HEAD /",
+            "GET /*path",
+            "HEAD /*path"
+          ],
+          "schema": "uvp.template/1",
+          "tags": [
+            "admin",
+            "dashboard",
+            "vue",
+            "vite"
+          ],
+          "variables": {
+            "name": {
+              "default": "admin-console",
+              "required": true,
+              "type": "slug"
+            },
+            "port": {
+              "default": 8080,
+              "type": "port"
+            }
+          },
+          "version": "1.0.0"
+        }
+      ]
+    },
+    {
       "id": "hello-package",
       "latest": "1.0.0",
       "versions": [
