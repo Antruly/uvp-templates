@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{project.name}} · Request Inspector</title><link rel="stylesheet" href="/style.css"><script type="module" src="/inspector.js"></script></head><body><main>
+<header><p class="eyebrow">{{project.name}}</p><h1>Request Inspector</h1><p>Send a request to this service and see what the backend received.</p></header>
+<section><form id="request"><p><strong>POST</strong> <code>/api/inspect</code></p><label for="content-type">Content type</label><select id="content-type"><option>application/json</option><option>text/plain</option><option>application/xml</option></select><label for="body">Request body</label><textarea id="body" rows="8">{"message":"Hello libuvcpp"}</textarea><button id="send">Send request</button><p id="error" role="alert"></p></form></section>
+<section><h2>Response</h2><p id="status" role="status">No request sent</p><pre id="response">The response will appear here.</pre></section>
+<footer>Same-origin only. The service returns a preview of up to 4,096 source bytes with explicit truncation. Invalid UTF-8 is replaced. Request bodies are not persisted. Avoid sending secrets; this development starter has no authentication.</footer>
+</main></body></html>
