@@ -307,6 +307,99 @@
           "version": "1.0.0"
         }
       ]
+    },
+    {
+      "id": "request-inspector",
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "category": "fullstack",
+          "description": "A same-origin HTTP inspection console backed by libuvcpp with explicit byte counts and bounded UTF-8 body previews.",
+          "digest": "sha256:4dd7941897dfa052bd2dc65b7e378a0af9e903cbb3fffe19f13749759e77e688",
+          "files": [
+            {
+              "bytes": 7,
+              "digest": "sha256:181314065df2f2fdaf920b1a8b5311daa216a2d6489a06ada5b49cc514d89417",
+              "path": ".gitignore"
+            },
+            {
+              "bytes": 1057,
+              "digest": "sha256:dc928ecc4b5d0a87fbbfd847dba7bc16a11278539fe0ea5b1a3336db72c6481c",
+              "path": "CMakeLists.txt"
+            },
+            {
+              "bytes": 1308,
+              "digest": "sha256:cda49abedbcf1da32f842fadf9aceacdc2bab53b152430bafa354be770cd5b91",
+              "path": "public/index.html"
+            },
+            {
+              "bytes": 1086,
+              "digest": "sha256:e37b47231c2c95e2d3fce9bcc17695ee90876e0b32ba6226ddd3797f5bb2b72c",
+              "path": "public/inspector.js"
+            },
+            {
+              "bytes": 1213,
+              "digest": "sha256:bcd11535b46c0354afb5761ee91c49b2612e6c4256d88c64f9c4e662631eb07e",
+              "path": "public/style.css"
+            },
+            {
+              "bytes": 2007,
+              "digest": "sha256:28ba958aa83ecf8e672890d4ea929c3545bc45188413549839b520df8a940728",
+              "path": "README.md"
+            },
+            {
+              "bytes": 1878,
+              "digest": "sha256:eab2d95f1503f9e7a96f518b5cac57d6289b245a921537e2d4c594ab28d44e5d",
+              "path": "src/main.cpp"
+            }
+          ],
+          "id": "request-inspector",
+          "license": {
+            "file": "LICENSE",
+            "spdx": "MIT"
+          },
+          "name": "HTTP request inspector",
+          "path": "packages/request-inspector/1.0.0",
+          "provenance": {
+            "author": "Antruly",
+            "createdAt": "2026-11-13T18:12:00Z",
+            "revision": "0e1ea68d1f0b791c0e3cd40109a94db06fff7fd4",
+            "source": "https://github.com/Antruly/uvscope"
+          },
+          "requires": {
+            "features": [],
+            "libuvcpp": ">=1.9.1 <2.0.0",
+            "uvp": ">=0.4.0"
+          },
+          "routes": [
+            "GET /healthz",
+            "POST /api/inspect",
+            "GET /",
+            "HEAD /",
+            "GET /*path",
+            "HEAD /*path"
+          ],
+          "schema": "uvp.template/1",
+          "tags": [
+            "http",
+            "inspector",
+            "console",
+            "libuvcpp"
+          ],
+          "variables": {
+            "name": {
+              "default": "request-inspector",
+              "required": true,
+              "type": "slug"
+            },
+            "port": {
+              "default": 8080,
+              "type": "port"
+            }
+          },
+          "version": "1.0.0"
+        }
+      ]
     }
   ],
   "schema": "uvp.registry/1"
