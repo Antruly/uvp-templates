@@ -1,0 +1,103 @@
+{
+  "schema": "uvp.template/1",
+  "id": "admin-workbench",
+  "version": "1.0.0",
+  "name": "Admin Workbench Skin",
+  "description": "Responsive Vue 3 admin console with collapsible navigation and customizable themes",
+  "category": "frontend",
+  "framework": "vue3",
+  "tags": [
+    "admin",
+    "dashboard",
+    "sidebar",
+    "theme",
+    "workbench"
+  ],
+  "requires": {
+    "uvp": ">=0.4.0"
+  },
+  "variables": {
+    "name": {
+      "type": "slug",
+      "required": true,
+      "default": "admin-workbench"
+    }
+  },
+  "files": [
+    {
+      "path": "frontend/index.html",
+      "digest": "sha256:50d97096772658832a7d8fcc0e56008fce480e8838ecb6e64ec3432cde08afe9",
+      "bytes": 350
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "digest": "sha256:1c8908b851657f7673d89cae066496470b71a3c238e49eb5b9fbee424b2832e6",
+      "bytes": 53312
+    },
+    {
+      "path": "frontend/package.json",
+      "digest": "sha256:5ac008132f2d3b985298c71b40f392f30eaf8042ae47f524e80143a29036670e",
+      "bytes": 562
+    },
+    {
+      "path": "frontend/src/App.vue",
+      "digest": "sha256:826f4f4d84ef533ffd8e8f55a950bc0ed3a8e12663d0ae439ea1a236b0a4b77e",
+      "bytes": 6770
+    },
+    {
+      "path": "frontend/src/main.ts",
+      "digest": "sha256:01dc489020740b2b3770a82d7884b04178da3eacbb4f1009141a47971000e42a",
+      "bytes": 690
+    },
+    {
+      "path": "frontend/src/style.css",
+      "digest": "sha256:4717f97a3cb0dc5e30f97c85fd3fa6c81b54e95eb0f7dd8c54efa8faa62bd5ef",
+      "bytes": 25568
+    },
+    {
+      "path": "frontend/src/views/OverviewView.vue",
+      "digest": "sha256:e34aa26d6ca626dcd43d4b8b6a9ad402fd0a68d97077298b4f4a7f1c9230d3ea",
+      "bytes": 4696
+    },
+    {
+      "path": "frontend/src/views/ProjectsView.vue",
+      "digest": "sha256:3d3be91571723e438e73c1c41b26abe729792fa07aef6ad3bb43075525c5d8cc",
+      "bytes": 2918
+    },
+    {
+      "path": "frontend/src/views/ReportsView.vue",
+      "digest": "sha256:366c120ec469b69e3be719f0d4ac60c575591b7b3957964a76fb08c3a070f9a0",
+      "bytes": 1930
+    },
+    {
+      "path": "frontend/src/views/SettingsView.vue",
+      "digest": "sha256:2466d1edfd9776e98b36c34b17c90969fbecaa71b78c04c12d8effd1cae742de",
+      "bytes": 4046
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "digest": "sha256:eb9827d601f81899bd8cfb0eecfd04348d5b35b864f1c543889b95582d1e3955",
+      "bytes": 479
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "digest": "sha256:7ec37586a6c1d516e4f995238d3fe39a14009fc0b779f30369f8f5807d566d3a",
+      "bytes": 190
+    },
+    {
+      "path": "README.md",
+      "digest": "sha256:789f6cc9de381fd2af4b43daea78d3cec1b28412def88f06d4089119dc11dea9",
+      "bytes": 510
+    }
+  ],
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "provenance": {
+    "author": "Antruly",
+    "source": "https://github.com/Antruly/uvp-templates",
+    "revision": "authored-for-registry",
+    "createdAt": "2026-11-13T16:00:00Z"
+  }
+}
