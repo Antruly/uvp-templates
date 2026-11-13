@@ -443,6 +443,100 @@
           "version": "1.0.0"
         }
       ]
+    },
+    {
+      "id": "websocket-console",
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "category": "fullstack",
+          "description": "A standalone libuvcpp text/binary echo service with a same-origin browser console and bounded message history.",
+          "digest": "sha256:c0a8ecdebdfcdce8d2501fea270be764473f8571994e100f67b9b4ac2a85f196",
+          "files": [
+            {
+              "bytes": 7,
+              "digest": "sha256:181314065df2f2fdaf920b1a8b5311daa216a2d6489a06ada5b49cc514d89417",
+              "path": ".gitignore"
+            },
+            {
+              "bytes": 1057,
+              "digest": "sha256:dc928ecc4b5d0a87fbbfd847dba7bc16a11278539fe0ea5b1a3336db72c6481c",
+              "path": "CMakeLists.txt"
+            },
+            {
+              "bytes": 3687,
+              "digest": "sha256:dd996a2fa54b0df3452d8e9ca63490f25ff0b83c1ab7a1168f829c9a9d42caf3",
+              "path": "public/console.js"
+            },
+            {
+              "bytes": 1508,
+              "digest": "sha256:56adffd652cd67ec2496745de97229683413d92587d8497d4a5b6fbe66ec3650",
+              "path": "public/index.html"
+            },
+            {
+              "bytes": 1780,
+              "digest": "sha256:2e2bd84aaf876e0f8a306a83695a61b700bd1a70f8ca053f2b12522d394aa006",
+              "path": "public/style.css"
+            },
+            {
+              "bytes": 1659,
+              "digest": "sha256:473083edf480cf7085b913ee566e91e9cf1e564d5fe1fd91aaed8b7eddb8ade0",
+              "path": "README.md"
+            },
+            {
+              "bytes": 1498,
+              "digest": "sha256:57124683df6e3597f63d61b2f78e038d6c492665579546dd4da5d986cbfec82f",
+              "path": "src/main.cpp"
+            }
+          ],
+          "id": "websocket-console",
+          "license": {
+            "file": "LICENSE",
+            "spdx": "MIT"
+          },
+          "name": "WebSocket console",
+          "path": "packages/websocket-console/1.0.0",
+          "provenance": {
+            "author": "Antruly",
+            "createdAt": "2026-11-13T18:00:00Z",
+            "revision": "0e1ea68d1f0b791c0e3cd40109a94db06fff7fd4",
+            "source": "https://github.com/Antruly/uvscope"
+          },
+          "requires": {
+            "features": [
+              "websocket"
+            ],
+            "libuvcpp": ">=1.9.1 <2.0.0",
+            "uvp": ">=0.4.0"
+          },
+          "routes": [
+            "GET /healthz",
+            "WS /ws",
+            "GET /",
+            "HEAD /",
+            "GET /*path",
+            "HEAD /*path"
+          ],
+          "schema": "uvp.template/1",
+          "tags": [
+            "websocket",
+            "console",
+            "libuvcpp"
+          ],
+          "variables": {
+            "name": {
+              "default": "websocket-console",
+              "required": true,
+              "type": "slug"
+            },
+            "port": {
+              "default": 8080,
+              "type": "port"
+            }
+          },
+          "version": "1.0.0"
+        }
+      ]
     }
   ],
   "schema": "uvp.registry/1"
