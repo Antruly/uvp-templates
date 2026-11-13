@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{project.name}} · WebSocket Console</title><link rel="stylesheet" href="/style.css"><script type="module" src="/console.js"></script></head>
+<body><main>
+<header><p class="eyebrow">{{project.name}}</p><h1>WebSocket Console</h1><p>Connect to this service and inspect echoed text and binary messages.</p></header>
+<section class="connection"><div><span id="state" role="status">Disconnected</span><code id="endpoint"></code></div><div><button id="connect">Connect</button><button id="disconnect" disabled>Disconnect</button></div></section>
+<section><form id="compose"><label for="mode">Message format</label><select id="mode"><option value="text">Text</option><option value="hex">Binary (hex)</option></select><label for="message">Message</label><textarea id="message" rows="4" placeholder="Hello WebSocket"></textarea><button id="send" disabled>Send message</button><p id="error" role="alert"></p></form></section>
+<section><div class="log-head"><h2>Message history</h2><button id="clear" type="button">Clear</button></div><p id="counts" role="status"></p><div id="log" aria-label="Message history"></div></section>
+<footer>This page retains at most 100 entries and 4,096 characters per entry. Payload bytes and truncated entries are reported. History is local to this page and is cleared on reload. The echo endpoint has no authentication.</footer>
+</main></body></html>
