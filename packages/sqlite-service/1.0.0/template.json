@@ -1,0 +1,128 @@
+{
+  "schema": "uvp.template/1",
+  "id": "sqlite-service",
+  "version": "1.0.0",
+  "name": "SQLite REST service",
+  "description": "A Vue and libuvcpp starter with a SQLite-backed CRUD API, startup schema initialization, and a working records interface.",
+  "category": "fullstack",
+  "framework": "vue3",
+  "tags": [
+    "sqlite",
+    "database",
+    "rest",
+    "vue",
+    "libuvcpp"
+  ],
+  "requires": {
+    "uvp": ">=0.4.0",
+    "libuvcpp": ">=1.9.1 <2.0.0",
+    "features": [
+      "db"
+    ]
+  },
+  "variables": {
+    "name": {
+      "type": "slug",
+      "required": true,
+      "default": "sqlite-service"
+    },
+    "port": {
+      "type": "port",
+      "default": 8080
+    }
+  },
+  "routes": [
+    "GET /healthz",
+    "GET /api/items",
+    "GET /api/items/:id",
+    "POST /api/items",
+    "PUT /api/items/:id",
+    "DELETE /api/items/:id",
+    "GET /",
+    "HEAD /",
+    "GET /*path",
+    "HEAD /*path"
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "digest": "sha256:631ae8736ef8daf5e47ff64aa5406ccb598ac040b36ab67f24ee5771275b2ac2",
+      "bytes": 81
+    },
+    {
+      "path": "CMakeLists.txt",
+      "digest": "sha256:dc928ecc4b5d0a87fbbfd847dba7bc16a11278539fe0ea5b1a3336db72c6481c",
+      "bytes": 1057
+    },
+    {
+      "path": "frontend/index.html",
+      "digest": "sha256:86fbcf16f893e8df6976e2296be88f76ba615e43adb10f2785f28e380c4a269e",
+      "bytes": 351
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "digest": "sha256:8bd674bb65e6f43b7b5233f60dc85b18257ed28e2933d5916ad3b1eb535fd597",
+      "bytes": 52055
+    },
+    {
+      "path": "frontend/package.json",
+      "digest": "sha256:ebdf352201b7f52d2dceda0fcec63b1cd957852ac120ad4c8e4e6a025e7d4765",
+      "bytes": 500
+    },
+    {
+      "path": "frontend/src/api.ts",
+      "digest": "sha256:8840a0bb72f63ddb54aaf27a0bebef8f52457e86ffc13acd41fbc908dc0a3fb6",
+      "bytes": 1354
+    },
+    {
+      "path": "frontend/src/App.vue",
+      "digest": "sha256:35a7b2d81f237aaa597a7f70eea58ceb5d4cac3e26297eed04d58a39ecc08fd0",
+      "bytes": 5359
+    },
+    {
+      "path": "frontend/src/main.ts",
+      "digest": "sha256:0d42fb6bb74a51d647f20a0cd2bcdcc7b89b146f4cdfbf6f1f7b640e7e036119",
+      "bytes": 111
+    },
+    {
+      "path": "frontend/src/style.css",
+      "digest": "sha256:d11c1b83cd055c4b2ecd205b944cf30131554babb5e4bcb442e881582b0ae3c9",
+      "bytes": 7554
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "digest": "sha256:f07af4df316c7be29b11fb1d0383e9a23b3bbc35b6900f22bfbc502ecd17046a",
+      "bytes": 448
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "digest": "sha256:eed2e44d796ab24abde796063cbb401d751cd1be3ee16a2040b1c8c2fbeb4ecf",
+      "bytes": 336
+    },
+    {
+      "path": "README.md",
+      "digest": "sha256:615a668df2417506cd081de66e3726cc03df68e1037a4e16ec59d36f88b5ded5",
+      "bytes": 2244
+    },
+    {
+      "path": "schema/001_items.sql",
+      "digest": "sha256:4275859892ab8cb875785e921015ab296f511ffbf6eaa31aec2fcc8fea5e2eaa",
+      "bytes": 146
+    },
+    {
+      "path": "src/main.cpp",
+      "digest": "sha256:eb3e4040e8d1a26cb6503f24fa89fae70e55711b1fb7fabdba083bc84235da8f",
+      "bytes": 9274
+    }
+  ],
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "provenance": {
+    "author": "Antruly",
+    "source": "https://github.com/Antruly/uvp-templates",
+    "revision": "issue-12",
+    "createdAt": "2026-11-13T17:44:00Z"
+  }
+}
