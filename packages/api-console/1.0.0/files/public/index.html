@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Postman Lite</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">PL</span>
+        <span class="brand-name">Postman Lite</span>
+      </div>
+
+      <section class="side-section">
+        <header class="side-head">
+          <h2>集合</h2>
+          <button id="save-btn" class="ghost" type="button" title="保存当前请求">保存</button>
+        </header>
+        <ul id="collections" class="side-list"></ul>
+        <p id="collections-empty" class="side-empty">还没有保存的请求</p>
+      </section>
+
+      <section class="side-section">
+        <header class="side-head">
+          <h2>历史</h2>
+          <button id="clear-history" class="ghost" type="button">清空</button>
+        </header>
+        <ul id="history" class="side-list"></ul>
+        <p id="history-empty" class="side-empty">发送后这里会出现记录</p>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="request-bar">
+        <select id="method" aria-label="请求方法">
+          <option>GET</option>
+          <option>POST</option>
+          <option>PUT</option>
+          <option>PATCH</option>
+          <option>DELETE</option>
+          <option>HEAD</option>
+          <option>OPTIONS</option>
+        </select>
+        <input id="url" type="text" spellcheck="false"
+               placeholder="https://api.example.com/users?page=1"
+               aria-label="请求 URL">
+        <button id="send-btn" class="primary" type="button">发送</button>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="headers" role="tab">请求头 <span id="header-count" class="badge">0</span></button>
+        <button class="tab" data-tab="body" role="tab">请求体</button>
+        <button class="tab" data-tab="options" role="tab">选项</button>
+      </nav>
+
+      <section id="tab-headers" class="panel active">
+        <div class="editor-head">
+          <span class="muted">名称 / 值</span>
+          <button id="add-header" class="ghost" type="button">+ 添加</button>
+        </div>
+        <div id="headers-editor" class="headers-editor"></div>
+      </section>
+
+      <section id="tab-body" class="panel">
+        <div class="editor-head">
+          <span class="muted">请求体</span>
+          <select id="content-type" aria-label="内容类型">
+            <option value="application/json">application/json</option>
+            <option value="text/plain">text/plain</option>
+            <option value="application/x-www-form-urlencoded">x-www-form-urlencoded</option>
+            <option value="">不设置 Content-Type</option>
+          </select>
+        </div>
+        <textarea id="body" spellcheck="false" placeholder="{&#10;  &quot;name&quot;: &quot;Ada&quot;&#10;}"></textarea>
+      </section>
+
+      <section id="tab-options" class="panel">
+        <label class="option-row">
+          <input id="verify-tls" type="checkbox" checked>
+          <span>校验 TLS 证书与主机名</span>
+        </label>
+        <label class="option-row">
+          <span>超时</span>
+          <input id="timeout" type="number" min="1000" max="120000" step="1000" value="15000">
+          <span class="muted">毫秒</span>
+        </label>
+        <p class="hint">请求由本地 C++ 服务发出，不受浏览器 CORS 限制。</p>
+      </section>
+
+      <section class="response">
+        <header class="response-head">
+          <div class="response-title">
+            <span>响应</span>
+            <span id="status-pill" class="pill">—</span>
+            <span id="response-time" class="meta"></span>
+            <span id="response-size" class="meta"></span>
+          </div>
+          <nav class="resp-tabs">
+            <button class="resp-tab active" data-resp="body" type="button">Body</button>
+            <button class="resp-tab" data-resp="headers" type="button">Headers</button>
+            <button class="resp-tab" data-resp="preview" type="button">预览</button>
+          </nav>
+        </header>
+
+        <div id="resp-body-panel" class="resp-panel active">
+          <pre id="resp-body" class="resp-body">等待发送请求…</pre>
+        </div>
+
+        <div id="resp-headers-panel" class="resp-panel">
+          <div id="resp-headers" class="resp-headers"></div>
+        </div>
+
+        <div id="resp-preview-panel" class="resp-panel">
+          <div class="preview-bar">
+            <span class="muted">
+              沙箱渲染：脚本站点与主页面隔离；相对资源按原始 URL 从远端加载。
+            </span>
+            <label class="preview-toggle">
+              <input id="preview-scripts" type="checkbox" checked>
+              <span>允许脚本</span>
+            </label>
+          </div>
+          <div class="preview-wrap">
+            <p id="preview-empty" class="preview-empty">
+              当前响应不是 HTML，无法预览。
+            </p>
+            <iframe id="preview-frame" class="preview-frame"
+                    sandbox="allow-scripts allow-forms allow-popups"
+                    referrerpolicy="no-referrer" title="HTML 预览"></iframe>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
