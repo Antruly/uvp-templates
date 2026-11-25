@@ -47,6 +47,43 @@ index.json               generated from packages/; never edited by hand
 `packages/<id>/<version>` is immutable. A change is a new version; replacing an
 existing one is not a merge this repository accepts.
 
+## Use a package
+
+uvp is the client. It validates a package, stores it locally, and renders a
+workspace from it. Install uvp first — `npx uvp-agents setup`, or see uvp's
+[installation page](https://github.com/Antruly/uvp/blob/main/docs/installation.md) —
+then work against a checkout of this repository:
+
+```bash
+# There is no package server: a checkout is the source for a package.
+git clone https://github.com/Antruly/uvp-templates
+cd uvp-templates
+
+# Check the package, then import it into the local store.
+uvp template validate ./packages/hello-package/1.0.0
+uvp template import ./packages/hello-package/1.0.0 --dry-run
+uvp template import ./packages/hello-package/1.0.0
+
+# Find it, then generate from it instead of a built-in template.
+uvp template search --text hello
+uvp init ./svc --name svc --template-package hello-package@1.0.0
+```
+
+The local store is `~/.uvp/templates` unless `$UVP_TEMPLATE_HOME` says otherwise.
+`uvp template export <id>@<version> --target DIR` writes a stored package back
+out in this repository's layout.
+
+`uvp template search` reads the **local store**, not this repository's
+`index.json`. Remote search, download, and sync are the registry-client work in
+[uvp#239](https://github.com/Antruly/uvp/issues/239); until that ships, the index
+is what a person or an agent reads to choose a package, and `import` is the
+hand-off.
+
+The split is deliberate: uvp owns the package format and the client
+([docs/template-packages.md](https://github.com/Antruly/uvp/blob/main/docs/template-packages.md)),
+and this repository owns the package data, the deterministic index, and the
+review that admits a version. If the two disagree about the format, uvp wins.
+
 ## Submit a package
 
 1. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the uvp package format.
