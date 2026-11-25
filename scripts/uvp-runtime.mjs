@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
@@ -30,6 +31,7 @@ const run = (command, args, options = {}) => {
     timeout: options.timeoutMs ?? 10 * 60 * 1000,
     maxBuffer: 16 * 1024 * 1024,
     env: { ...process.env, ...options.env },
+    ...(options.cwd === undefined ? {} : { cwd: options.cwd }),
   });
   if (result.error !== undefined) {
     return { ok: false, status: undefined, stdout: "", stderr: String(result.error.message) };
@@ -84,34 +86,56 @@ try {
       const directory = path.join(root, versionEntry.path);
       const label = `${entry.id}@${versionEntry.version}`;
       console.log(`\n== ${label} ==`);
+      const workspace = path.join(temporary, `ws-${entry.id}-${versionEntry.version}`);
+      const environment = { UVP_TEMPLATE_HOME: path.join(temporary, "store") };
       const steps = [
         ["validate", ["template", "validate", directory, "--json"], {}],
-        ["import", ["template", "import", directory, "--json"], { UVP_TEMPLATE_HOME: path.join(temporary, "store") }],
-        [
-          "init",
-          [
-            "init",
-            path.join(temporary, `ws-${entry.id}-${versionEntry.version}`),
-            "--name",
-            entry.id,
-            "--template-package",
-            label,
-          ],
-          { UVP_TEMPLATE_HOME: path.join(temporary, "store") },
-        ],
-        [
-          "build",
-          ["build", path.join(temporary, `ws-${entry.id}-${versionEntry.version}`)],
-          { UVP_TEMPLATE_HOME: path.join(temporary, "store") },
-        ],
+        ["import", ["template", "import", directory, "--json"], environment],
+        ["init", ["init", workspace, "--name", entry.id, "--template-package", label], environment],
       ];
+      let stopped = false;
+      const reportFailure = (name, result) => {
+        failed = true;
+        stopped = true;
+        console.error(`${name} failed (exit ${String(result.status)})`);
+        if (result.stdout) console.error(result.stdout);
+        if (result.stderr) console.error(result.stderr);
+      };
       for (const [name, args, env] of steps) {
         const result = run("uvp", args, { env });
         if (!result.ok) {
-          failed = true;
-          console.error(`${name} failed (exit ${String(result.status)})`);
-          if (result.stdout) console.error(result.stdout);
-          if (result.stderr) console.error(result.stderr);
+          reportFailure(name, result);
+          break;
+        }
+        console.log(`${name}: ok`);
+      }
+      if (stopped) continue;
+
+      const built = run("uvp", ["build", workspace], { env: environment });
+      if (built.ok) {
+        console.log("build: ok");
+        continue;
+      }
+      if (existsSync(path.join(workspace, "CMakeLists.txt"))) {
+        reportFailure("build", built);
+        continue;
+      }
+      // A `frontend` package is a skin, not a service: uvp init renders it,
+      // but uvp build refuses a workspace with no CMakeLists.txt. Build the
+      // app it actually ships, and say that the C++ build did not happen.
+      const frontend = path.join(workspace, "frontend");
+      if (versionEntry.category !== "frontend" || !existsSync(path.join(frontend, "package.json"))) {
+        reportFailure("build", built);
+        continue;
+      }
+      console.log(`build: skipped (no CMakeLists.txt; ${versionEntry.category} package ships no C++ service)`);
+      for (const [name, args] of [
+        ["frontend install", ["ci"]],
+        ["frontend build", ["run", "build"]],
+      ]) {
+        const result = run("npm", args, { cwd: frontend });
+        if (!result.ok) {
+          reportFailure(name, result);
           break;
         }
         console.log(`${name}: ok`);
@@ -123,4 +147,6 @@ try {
 }
 
 if (failed) process.exit(1);
-console.log("\nruntime lane: validate, import, init, and build passed for every package");
+console.log(
+  "\nruntime lane: validate, import, and init passed for every package; the build each package ships passed too",
+);
