@@ -1,0 +1,86 @@
+{
+  "schema": "uvp.template/1",
+  "id": "websocket-console",
+  "version": "1.0.0",
+  "name": "WebSocket console",
+  "description": "A standalone libuvcpp text/binary echo service with a same-origin browser console and bounded message history.",
+  "category": "fullstack",
+  "tags": [
+    "websocket",
+    "console",
+    "libuvcpp"
+  ],
+  "requires": {
+    "uvp": ">=0.4.0",
+    "libuvcpp": ">=1.9.1 <2.0.0",
+    "features": [
+      "websocket"
+    ]
+  },
+  "variables": {
+    "name": {
+      "type": "slug",
+      "required": true,
+      "default": "websocket-console"
+    },
+    "port": {
+      "type": "port",
+      "default": 8080
+    }
+  },
+  "routes": [
+    "GET /healthz",
+    "WS /ws",
+    "GET /",
+    "HEAD /",
+    "GET /*path",
+    "HEAD /*path"
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "digest": "sha256:181314065df2f2fdaf920b1a8b5311daa216a2d6489a06ada5b49cc514d89417",
+      "bytes": 7
+    },
+    {
+      "path": "CMakeLists.txt",
+      "digest": "sha256:dc928ecc4b5d0a87fbbfd847dba7bc16a11278539fe0ea5b1a3336db72c6481c",
+      "bytes": 1057
+    },
+    {
+      "path": "public/console.js",
+      "digest": "sha256:dd996a2fa54b0df3452d8e9ca63490f25ff0b83c1ab7a1168f829c9a9d42caf3",
+      "bytes": 3687
+    },
+    {
+      "path": "public/index.html",
+      "digest": "sha256:56adffd652cd67ec2496745de97229683413d92587d8497d4a5b6fbe66ec3650",
+      "bytes": 1508
+    },
+    {
+      "path": "public/style.css",
+      "digest": "sha256:2e2bd84aaf876e0f8a306a83695a61b700bd1a70f8ca053f2b12522d394aa006",
+      "bytes": 1780
+    },
+    {
+      "path": "README.md",
+      "digest": "sha256:473083edf480cf7085b913ee566e91e9cf1e564d5fe1fd91aaed8b7eddb8ade0",
+      "bytes": 1659
+    },
+    {
+      "path": "src/main.cpp",
+      "digest": "sha256:57124683df6e3597f63d61b2f78e038d6c492665579546dd4da5d986cbfec82f",
+      "bytes": 1498
+    }
+  ],
+  "license": {
+    "spdx": "MIT",
+    "file": "LICENSE"
+  },
+  "provenance": {
+    "author": "Antruly",
+    "source": "https://github.com/Antruly/uvscope",
+    "revision": "0e1ea68d1f0b791c0e3cd40109a94db06fff7fd4",
+    "createdAt": "2026-11-13T18:00:00Z"
+  }
+}
