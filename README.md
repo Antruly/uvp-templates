@@ -42,6 +42,7 @@ packages/<id>/<version>/
   preview.(png|svg|webp) optional preview
   files/                 the source tree, relative paths only
 index.json               generated from packages/; never edited by hand
+archives/<id>/<version>.tgz  generated tarball, digest recorded in index.json
 ```
 
 `packages/<id>/<version>` is immutable. A change is a new version; replacing an

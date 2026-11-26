@@ -5,6 +5,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 21861,
+            "digest": "sha256:c7c6b7faea42d41dd445ce07f89183cb484ff7ed8832d48f6c0141a95dccd478",
+            "path": "archives/admin-console/1.0.0.tgz"
+          },
           "category": "fullstack",
           "description": "A Vue 3 administration shell served by a libuvcpp HTTP service, with an overview API and basic theme and locale preferences.",
           "digest": "sha256:17e92c97edd4750bc6d4396c254aefe34775f7ce85c60dee429b46b4481c9ff2",
@@ -139,6 +144,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 27551,
+            "digest": "sha256:683f51331be93dec9fffaff63143c059f017732860ba2ecee6c76e3a02016cce",
+            "path": "archives/admin-workbench/1.0.0.tgz"
+          },
           "category": "frontend",
           "description": "Responsive Vue 3 admin console with collapsible navigation and customizable themes",
           "digest": "sha256:66c37d00b4764bd3b0ddbde2e61a1ea1f4a797efec293775f2f34af2d570c2ae",
@@ -250,6 +260,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 86410,
+            "digest": "sha256:92c8666b2e3ab5974f3efe42d9989668c1cca180b02b315664a1127239bd82f9",
+            "path": "archives/api-console/1.0.0.tgz"
+          },
           "category": "fullstack",
           "description": "A Postman-style HTTP debugging console: libuvcpp JSON API plus a static SPA with sandboxed HTML preview, history, and saved collections.",
           "digest": "sha256:347b597ff692c7fca92f56fad550c7ac2504502ea44b82fc5f732cb299f5cb40",
@@ -352,6 +367,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 4006,
+            "digest": "sha256:d6f6b89beb173d0316506181729251119dea92d783c463dde1f21c23d8a63a08",
+            "path": "archives/hello-package/1.0.0.tgz"
+          },
           "category": "backend",
           "description": "The hello-http service packaged as a standard uvp template package.",
           "digest": "sha256:b3d3e2dbcbd9ee5f8b93d331bcaa0eeb7db559c65973d140f43dac35f5849618",
@@ -415,6 +435,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 6095,
+            "digest": "sha256:8d54dcc3cf996a3bfceef4890db3b0ce9c452574b519579a7cad5f8057eb7323",
+            "path": "archives/request-inspector/1.0.0.tgz"
+          },
           "category": "fullstack",
           "description": "A same-origin HTTP inspection console backed by libuvcpp with explicit byte counts and bounded UTF-8 body previews.",
           "digest": "sha256:4dd7941897dfa052bd2dc65b7e378a0af9e903cbb3fffe19f13749759e77e688",
@@ -508,6 +533,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 23487,
+            "digest": "sha256:d6b38f7c81c739e8b8cf580fd70e51dc9f001ee164b458af925dd0e59de1bf0d",
+            "path": "archives/sqlite-service/1.0.0.tgz"
+          },
           "category": "fullstack",
           "description": "A Vue and libuvcpp starter with a SQLite-backed CRUD API, startup schema initialization, and a working records interface.",
           "digest": "sha256:6696c8a67cc550a5d23c21114a7d31c4cdafb9016442522d306136e1340d873b",
@@ -644,6 +674,11 @@
       "latest": "1.0.0",
       "versions": [
         {
+          "archive": {
+            "bytes": 7103,
+            "digest": "sha256:5bedf23112d58747c076363eabc9c41c28e35e881b92adbea52cfa27e58db491",
+            "path": "archives/websocket-console/1.0.0.tgz"
+          },
           "category": "fullstack",
           "description": "A standalone libuvcpp text/binary echo service with a same-origin browser console and bounded message history.",
           "digest": "sha256:c0a8ecdebdfcdce8d2501fea270be764473f8571994e100f67b9b4ac2a85f196",
