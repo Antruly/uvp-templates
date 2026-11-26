@@ -16,6 +16,11 @@ Do not edit it by hand.
           "version": "1.2.0",
           "path": "packages/acme-dashboard/1.2.0",
           "digest": "sha256:…",
+          "archive": {
+            "path": "archives/acme-dashboard/1.2.0.tgz",
+            "digest": "sha256:…",
+            "bytes": 4567
+          },
           "name": "Acme dashboard",
           "description": "A dashboard service",
           "category": "fullstack",
@@ -46,7 +51,24 @@ Do not edit it by hand.
 - `path` is the repository-relative package directory.
 - `digest` is `sha256:` over the manifest's canonical JSON (RFC 8785-style:
   sorted keys, no whitespace), the same rule uvp uses.
+- `archive` names one tarball for this version: repository-relative `path`,
+  `digest` over the `.tgz` bytes, and `bytes`.
 - `files[]` repeats the verified manifest list: path, digest, and byte count.
+
+## Archive
+
+`archives/<id>/<version>.tgz` is generated from `packages/<id>/<version>/` by
+`node scripts/build-index.mjs --write`; `--check` fails when an archive is
+missing, its bytes differ, or its index entry disagrees.
+
+The bytes are deterministic: entries sorted bytewise, mode `0644`, uid/gid `0`,
+mtime `0`, ustar headers, and gzip with no timestamp. The archive root holds the
+package contents (`template.json`, `README.md`, `LICENSE`, optional preview, and
+`files/`), not the `packages/...` path.
+
+A client verifies two different facts: the `.tgz` against `archive.digest`
+before extraction, then every extracted file against `files[]`. A version
+archive is immutable; a change is a new version.
 
 ## URL
 
